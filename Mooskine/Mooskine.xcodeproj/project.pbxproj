@@ -589,7 +589,7 @@
 				C7AD469F21B8F9F500FC2BDB /* Mooskine_12-06-2018_AttributedString.xcdatamodel */,
 				C70AE25F21B65F8E008A322C /* Mooskine.xcdatamodel */,
 			);
-			currentVersion = C7AD469F21B8F9F500FC2BDB /* Mooskine_12-06-2018_AttributedString.xcdatamodel */;
+			currentVersion = C70AE25F21B65F8E008A322C /* Mooskine.xcdatamodel */;
 			path = Mooskine.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

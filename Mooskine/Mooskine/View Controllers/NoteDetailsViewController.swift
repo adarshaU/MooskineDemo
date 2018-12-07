@@ -32,7 +32,7 @@ class NoteDetailsViewController: UIViewController {
         if let creationDate = note.creationDate {
             navigationItem.title = dateFormatter.string(from: creationDate)
         }
-        textView.attributedText = note.attributedText
+        textView.text = note.text
         
         // keyboard toolbar configuration
         configureToolbarItems()
@@ -65,7 +65,7 @@ extension NoteDetailsViewController {
 
 extension NoteDetailsViewController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
-        note.attributedText = textView.attributedText
+        note.text = textView.text
         try? dataController.viewContext.save()
     }
 }

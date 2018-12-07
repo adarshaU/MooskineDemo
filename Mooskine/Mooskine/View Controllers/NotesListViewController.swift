@@ -82,8 +82,9 @@ class NotesListViewController: UIViewController, UITableViewDataSource ,NSFetche
     // Adds a new `Note` to the end of the `notebook`'s `notes` array
     func addNote() {
         
+        
         let note = Note(context: dataControler.viewContext)
-        note.attributedText = NSAttributedString(string: "New Note")
+        note.text = "New Note"
         note.creationDate = Date()
         note.notebook = notebook
     try? dataControler.viewContext.save()
@@ -130,7 +131,7 @@ class NotesListViewController: UIViewController, UITableViewDataSource ,NSFetche
         let cell = tableView.dequeueReusableCell(withIdentifier: NoteCell.defaultReuseIdentifier, for: indexPath) as! NoteCell
 
         // Configure cell
-        cell.textPreviewLabel.attributedText = aNote.attributedText
+        cell.textPreviewLabel.text = aNote.text
         if let date = aNote.creationDate{
         cell.dateLabel.text = dateFormatter.string(from: date)
         }
