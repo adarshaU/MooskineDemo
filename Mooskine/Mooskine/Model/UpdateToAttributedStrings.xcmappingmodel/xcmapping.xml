@@ -83,7 +83,7 @@ cBIAAYagrxD/AAcACAAXADMANAA1AD8AQABBAFwAXQBeAGQAZQBxAIcAiACJAIoAiwCMAI0AjgCPAJAA
         <relationship name="entitymappings" type="0/0" destination="XDDEVENTITYMAPPING" idrefs="z104 z108"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z108">
-        <attribute name="migrationpolicyclassname" type="string">UpdateToAttributedStringsPolicy</attribute>
+        <attribute name="migrationpolicyclassname" type="string">Mooskine.UpdateToAttributedStringsPolicy</attribute>
         <attribute name="sourcename" type="string">Note</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">2</attribute>
