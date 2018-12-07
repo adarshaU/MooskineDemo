@@ -82,7 +82,14 @@ extension NoteDetailsViewController {
         let trash = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteTapped(sender:)))
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         
-        return [trash, space]
+        let bold = UIBarButtonItem(image: #imageLiteral(resourceName: "toolbar-bold"), style: .plain, target: self, action: #selector(boldTapped(sender:)))
+        
+        let red = UIBarButtonItem(image: #imageLiteral(resourceName: "toolbar-underline"), style: .plain, target: self, action: #selector(redTapped(sender:)))
+        
+        let cow = UIBarButtonItem(image: #imageLiteral(resourceName: "texture-cow"), style: .plain, target: self, action: #selector(cowTapped(sender:)))
+        
+        
+        return [trash, space,bold,space,red,space,cow,space]
     }
     
     /// Configure the current toolbar
@@ -103,6 +110,56 @@ extension NoteDetailsViewController {
     
     @IBAction func deleteTapped(sender: Any) {
         showDeleteAlert()
+    }
+    @IBAction func boldTapped(sender: Any) {
+        let newText = textView.attributedText.mutableCopy() as! NSMutableAttributedString
+        newText.addAttribute(.font, value: UIFont(name: "OpenSans-Bold", size: 22)!, range: textView.selectedRange)
+        let selectedTextRange = textView.selectedTextRange
+        
+        textView.attributedText = newText
+        //selected text range is the one portion of user highlighted text, after adding attributed text its neccessary to keep the selected text as it is how it was earlier
+        textView.selectedTextRange = selectedTextRange
+        
+        note.attributedText = textView.attributedText
+        try? dataController.viewContext.save()
+        
+    }
+    @IBAction func redTapped(sender: Any) {
+        let newText = textView.attributedText.mutableCopy() as! NSMutableAttributedString
+       
+       let attributeList:[NSAttributedStringKey:Any] = [
+            .foregroundColor : UIColor.red,
+            .underlineStyle: 1,
+            .underlineColor:UIColor.red
+        ]
+        
+        newText.addAttributes(attributeList, range: textView.selectedRange)
+        
+        
+        let selectedTextRange = textView.selectedTextRange
+        
+        textView.attributedText = newText
+        //selected text range is the one portion of user highlighted text, after adding attributed text its neccessary to keep the selected text as it is how it was earlier
+        textView.selectedTextRange = selectedTextRange
+        
+        note.attributedText = textView.attributedText
+        try? dataController.viewContext.save()
+    }
+    @IBAction func cowTapped(sender: Any) {
+        let newText = textView.attributedText.mutableCopy() as! NSMutableAttributedString
+      let selectedRange = textView.selectedRange
+        let selectedText = textView.attributedText.attributedSubstring(from: selectedRange)
+        let cowText = Pathifier.makeMutableAttributedString(for: selectedText, withFont: UIFont(name:"AvenirNext-Heavy",size:56)!, withPatternImage: #imageLiteral(resourceName: "texture-cow"))
+        newText.replaceCharacters(in: selectedRange, with: cowText)
+        
+        
+        textView.attributedText = newText
+        //selected text range is the one portion of user highlighted text, after adding attributed text its neccessary to keep the selected text as it is how it was earlier
+        textView.selectedRange = NSMakeRange(selectedRange.location, 1)
+        
+        
+        note.attributedText = textView.attributedText
+        try? dataController.viewContext.save()
     }
     
     // MARK: Helper methods for actions
