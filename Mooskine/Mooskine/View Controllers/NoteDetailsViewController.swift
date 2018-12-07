@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreData
+
 
 class NoteDetailsViewController: UIViewController {
     /// A text view that displays a note's text
@@ -26,6 +28,11 @@ class NoteDetailsViewController: UIViewController {
         df.dateStyle = .medium
         return df
     }()
+    
+    var saveObserverToken:Any?
+    
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +44,11 @@ class NoteDetailsViewController: UIViewController {
         // keyboard toolbar configuration
         configureToolbarItems()
         configureTextViewInputAccessoryView()
+        
+        self.addSaveNotificationObserver()
+    }
+    deinit {
+        self.removeSaveNotificationObserver()
     }
 
     @IBAction func deleteNote(sender: Any) {
@@ -145,22 +157,46 @@ extension NoteDetailsViewController {
         note.attributedText = textView.attributedText
         try? dataController.viewContext.save()
     }
+    
+    
     @IBAction func cowTapped(sender: Any) {
         let newText = textView.attributedText.mutableCopy() as! NSMutableAttributedString
-      let selectedRange = textView.selectedRange
-        let selectedText = textView.attributedText.attributedSubstring(from: selectedRange)
-        let cowText = Pathifier.makeMutableAttributedString(for: selectedText, withFont: UIFont(name:"AvenirNext-Heavy",size:56)!, withPatternImage: #imageLiteral(resourceName: "texture-cow"))
-        newText.replaceCharacters(in: selectedRange, with: cowText)
+      
+        let backgroundContext:NSManagedObjectContext! = dataController.backgroundContext
+        let selectedRange = self.textView.selectedRange
+        let selectedText = self.textView.attributedText.attributedSubstring(from: selectedRange)
+         let cowText = Pathifier.makeMutableAttributedString(for: selectedText, withFont: UIFont(name:"AvenirNext-Heavy",size:56)!, withPatternImage: UIImage(named: "texture-cow")!)
+       
+        let noteID = note.objectID
+        
+        backgroundContext?.perform {
+            let backgroundNote = backgroundContext.object(with: noteID) as! Note
+            newText.replaceCharacters(in: selectedRange, with: cowText)
+            sleep(5)
+            backgroundNote.attributedText = newText
+            try? backgroundContext.save()
+            
+        }
         
         
-        textView.attributedText = newText
-        //selected text range is the one portion of user highlighted text, after adding attributed text its neccessary to keep the selected text as it is how it was earlier
-        textView.selectedRange = NSMakeRange(selectedRange.location, 1)
+        
+//        textView.attributedText = newText
+//        //selected text range is the one portion of user highlighted text, after adding attributed text its neccessary to keep the selected text as it is how it was earlier
+//        textView.selectedRange = NSMakeRange(selectedRange.location, 1)
+//
+      
         
         
-        note.attributedText = textView.attributedText
+    //    note.attributedText = textView.attributedText
         try? dataController.viewContext.save()
     }
+    
+    
+    
+    
+    
+    
+    
     
     // MARK: Helper methods for actions
     private func showDeleteAlert() {
@@ -176,4 +212,35 @@ extension NoteDetailsViewController {
         alert.addAction(deleteAction)
         present(alert, animated: true, completion: nil)
     }
+}
+
+
+
+
+extension NoteDetailsViewController{
+    
+    func addSaveNotificationObserver(){
+        removeSaveNotificationObserver()
+        saveObserverToken = NotificationCenter.default.addObserver(forName: .NSManagedObjectContextObjectsDidChange, object: dataController.viewContext, queue: nil, using: handlesaveNotificationObserver(notification:))
+        
+        
+    }
+    func removeSaveNotificationObserver(){
+        
+        if let token = saveObserverToken{
+            NotificationCenter.default.removeObserver(token)
+        }
+        
+    }
+    fileprivate func reloadTextView() {
+        textView.attributedText = note.attributedText
+    }
+    
+    func handlesaveNotificationObserver(notification:Notification){
+        DispatchQueue.main.async {
+            self.reloadTextView()
+        }
+        
+    }
+    
 }
